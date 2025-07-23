@@ -30,12 +30,14 @@ function Router() {
       
       <Route path="/survey/new" component={() => (
         <AuthGuard>
+          <Navbar />
           <SurveyBuilder />
         </AuthGuard>
       )} />
       
       <Route path="/survey/:id/edit" component={() => (
         <AuthGuard>
+          <Navbar />
           <SurveyBuilder />
         </AuthGuard>
       )} />
