@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { useAuth } from "@/hooks/use-auth";
-import { logOut } from "@/lib/firebase";
+import { authService } from "@/lib/auth-local";
 import { Bell, ChevronDown, BarChart3, Plus, Settings, LogOut } from "lucide-react";
 
 export default function Navbar() {
@@ -20,7 +20,7 @@ export default function Navbar() {
 
   const handleSignOut = async () => {
     try {
-      await logOut();
+      await authService.signOut();
     } catch (error) {
       console.error('Sign out error:', error);
     }
@@ -65,7 +65,6 @@ export default function Navbar() {
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" className="flex items-center space-x-2 p-2">
                   <Avatar className="w-8 h-8">
-                    <AvatarImage src={user?.photoURL || ''} alt={user?.displayName || ''} />
                     <AvatarFallback>
                       {user?.displayName?.charAt(0) || user?.email?.charAt(0) || 'U'}
                     </AvatarFallback>

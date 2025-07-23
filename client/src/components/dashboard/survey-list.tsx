@@ -4,8 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Link } from "wouter";
-import { collection, query, where, orderBy, getDocs } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+import { storageService } from "@/lib/storage-local";
 import { useAuth } from "@/hooks/use-auth";
 import { Survey } from "@shared/schema";
 import { Edit3, BarChart3, Share2, MoreHorizontal, Search, Filter, Play, Pause } from "lucide-react";
@@ -23,9 +22,8 @@ export default function SurveyList() {
   const [shareModalSurvey, setShareModalSurvey] = useState<Survey | null>(null);
 
   const updateSurveyStatusMutation = useMutation({
-    mutationFn: async ({ surveyId, status }: { surveyId: string; status: string }) => {
-      const surveyRef = doc(db, 'surveys', surveyId);
-      await updateDoc(surveyRef, { status });
+    mutationFn: async ({ surveyId, status }: { surveyId: string; status: 'draft' | 'active' | 'completed' | 'archived' }) => {
+      await storageService.updateSurvey(surveyId, { status });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['surveys'] });
@@ -49,24 +47,12 @@ export default function SurveyList() {
   };
 
   const { data: surveys, isLoading } = useQuery({
-    queryKey: ['surveys', user?.uid],
+    queryKey: ['surveys', user?.id],
     queryFn: async () => {
       if (!user) return [];
-
-      const surveysRef = collection(db, 'surveys');
-      const q = query(
-        surveysRef,
-        where('createdBy', '==', user.uid),
-        orderBy('updatedAt', 'desc')
+      return storageService.getSurveys(user.id).sort((a, b) => 
+        new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
       );
-      
-      const snapshot = await getDocs(q);
-      return snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate(),
-        updatedAt: doc.data().updatedAt?.toDate()
-      } as Survey));
     },
     enabled: !!user
   });
