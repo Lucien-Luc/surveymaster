@@ -11,7 +11,7 @@ import { Edit3, BarChart3, Share2, MoreHorizontal, Search, Filter, Play, Pause }
 import { formatDistanceToNow } from "date-fns";
 import { SurveyShare } from "@/components/survey/survey-share";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { doc, updateDoc } from "firebase/firestore";
+// Firebase disabled
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 

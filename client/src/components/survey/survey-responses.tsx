@@ -2,8 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { collection, query, where, getDocs, orderBy } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+// Firebase disabled
 import { SurveyResponse, Survey } from "@shared/schema";
 import { Download, Users, TrendingUp, Calendar } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
