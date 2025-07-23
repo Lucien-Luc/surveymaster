@@ -24,7 +24,20 @@ function Router() {
       <Route path="/" component={() => (
         <AuthGuard>
           <Navbar />
-          <Dashboard />
+          <div className="min-h-screen bg-gray-50 p-8">
+            <div className="max-w-4xl mx-auto">
+              <div className="text-center mb-8">
+                <h1 className="text-3xl font-bold text-gray-900 mb-4">Welcome to SurveyFlow</h1>
+                <p className="text-gray-600 mb-8">Create and manage surveys with our easy-to-use builder</p>
+                <a 
+                  href="/survey/new" 
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                >
+                  Create Your First Survey
+                </a>
+              </div>
+            </div>
+          </div>
         </AuthGuard>
       )} />
       

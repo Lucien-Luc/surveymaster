@@ -1,8 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
-import { collection, query, where, getDocs, getCountFromServer } from "firebase/firestore";
-import { db } from "@/lib/firebase";
+// Using local storage instead of Firebase
 import { useAuth } from "@/hooks/use-auth";
 import { BarChart3, Users, TrendingUp, CheckCircle } from "lucide-react";
 
