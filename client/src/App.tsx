@@ -10,6 +10,8 @@ import Login from "@/pages/login";
 import SurveyBuilder from "@/pages/survey-builder";
 import SurveyView from "@/pages/survey-view";
 import SurveyResponsesPage from "@/pages/survey-responses";
+import Analytics from "@/pages/analytics";
+import Settings from "@/pages/settings";
 import NotFound from "@/pages/not-found";
 
 function Router() {
@@ -42,6 +44,20 @@ function Router() {
         <AuthGuard>
           <Navbar />
           <SurveyResponsesPage />
+        </AuthGuard>
+      )} />
+
+      <Route path="/analytics" component={() => (
+        <AuthGuard>
+          <Navbar />
+          <Analytics />
+        </AuthGuard>
+      )} />
+
+      <Route path="/settings" component={() => (
+        <AuthGuard>
+          <Navbar />
+          <Settings />
         </AuthGuard>
       )} />
       
