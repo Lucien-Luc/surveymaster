@@ -36,29 +36,60 @@ export function FormBuilder({ survey, onSave, onClose }: FormBuilderProps) {
     mutationFn: async (surveyData: Partial<InsertSurvey>) => {
       if (!user) throw new Error('User not authenticated');
       
-      const timestamp = serverTimestamp();
-      
-      if (survey?.id) {
-        // Update existing survey
-        const surveyRef = doc(db, 'surveys', survey.id);
-        await updateDoc(surveyRef, {
-          ...surveyData,
-          updatedAt: timestamp
-        });
-        return { ...survey, ...surveyData };
-      } else {
-        // Create new survey
-        const surveysRef = collection(db, 'surveys');
-        const newSurvey = {
-          ...surveyData,
-          createdBy: user.uid,
-          createdAt: timestamp,
-          updatedAt: timestamp,
-          status: 'draft' as const,
-          responseCount: 0
-        };
-        const docRef = await addDoc(surveysRef, newSurvey);
-        return { id: docRef.id, ...newSurvey };
+      try {
+        const timestamp = serverTimestamp();
+        
+        if (survey?.id) {
+          // Update existing survey
+          const surveyRef = doc(db, 'surveys', survey.id);
+          await updateDoc(surveyRef, {
+            ...surveyData,
+            updatedAt: timestamp
+          });
+          return { ...survey, ...surveyData };
+        } else {
+          // Create new survey
+          const surveysRef = collection(db, 'surveys');
+          const newSurvey = {
+            ...surveyData,
+            createdBy: user.id,
+            createdAt: timestamp,
+            updatedAt: timestamp,
+            status: 'draft' as const,
+            responseCount: 0
+          };
+          const docRef = await addDoc(surveysRef, newSurvey);
+          return { id: docRef.id, ...newSurvey };
+        }
+      } catch (error) {
+        console.error('Firebase error, falling back to local storage:', error);
+        
+        // Fallback to local storage
+        const now = new Date();
+        const localSurveys = JSON.parse(localStorage.getItem('surveyflow_surveys') || '[]');
+        
+        if (survey?.id) {
+          // Update existing survey in local storage
+          const updatedSurveys = localSurveys.map((s: any) => 
+            s.id === survey.id ? { ...s, ...surveyData, updatedAt: now } : s
+          );
+          localStorage.setItem('surveyflow_surveys', JSON.stringify(updatedSurveys));
+          return { ...survey, ...surveyData, updatedAt: now };
+        } else {
+          // Create new survey in local storage
+          const newSurvey = {
+            id: nanoid(),
+            ...surveyData,
+            createdBy: user.id,
+            createdAt: now,
+            updatedAt: now,
+            status: 'draft' as const,
+            responseCount: 0
+          };
+          localSurveys.push(newSurvey);
+          localStorage.setItem('surveyflow_surveys', JSON.stringify(localSurveys));
+          return newSurvey;
+        }
       }
     },
     onSuccess: (savedSurvey) => {

@@ -21,19 +21,30 @@ export default function SurveyBuilder() {
     queryFn: async () => {
       if (!params?.id) return null;
       
-      const surveyRef = doc(db, 'surveys', params.id);
-      const snapshot = await getDoc(surveyRef);
-      
-      if (!snapshot.exists()) {
-        throw new Error('Survey not found');
+      try {
+        const surveyRef = doc(db, 'surveys', params.id);
+        const snapshot = await getDoc(surveyRef);
+        
+        if (!snapshot.exists()) {
+          throw new Error('Survey not found');
+        }
+        
+        return {
+          id: snapshot.id,
+          ...snapshot.data(),
+          createdAt: snapshot.data().createdAt?.toDate(),
+          updatedAt: snapshot.data().updatedAt?.toDate()
+        } as Survey;
+      } catch (error) {
+        console.error('Firebase error:', error);
+        // Fallback to local storage for demo purposes
+        const localSurveys = JSON.parse(localStorage.getItem('surveyflow_surveys') || '[]');
+        const survey = localSurveys.find((s: any) => s.id === params.id);
+        if (!survey) {
+          throw new Error('Survey not found');
+        }
+        return survey;
       }
-      
-      return {
-        id: snapshot.id,
-        ...snapshot.data(),
-        createdAt: snapshot.data().createdAt?.toDate(),
-        updatedAt: snapshot.data().updatedAt?.toDate()
-      } as Survey;
     },
     enabled: isEditing
   });
