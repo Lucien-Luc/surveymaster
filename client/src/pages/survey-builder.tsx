@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { useRoute } from "wouter";
-import { FormBuilder } from "@/components/survey/form-builder";
+import { SurveyBuilder } from "@/components/survey/survey-builder";
 import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { Card, CardContent } from "@/components/ui/card";
 import { doc, getDoc } from "firebase/firestore";
@@ -9,7 +9,7 @@ import { db } from "@/lib/firebase";
 import { Survey } from "@shared/schema";
 import { AlertCircle } from "lucide-react";
 
-export default function SurveyBuilder() {
+export default function SurveyBuilderPage() {
   const [, params] = useRoute("/survey/:id/edit");
   const [, newRoute] = useRoute("/survey/new");
   
@@ -77,7 +77,7 @@ export default function SurveyBuilder() {
 
   if (isNewSurvey || (isEditing && survey)) {
     return (
-      <FormBuilder 
+      <SurveyBuilder 
         survey={survey || undefined}
         onSave={(savedSurvey) => {
           // Navigate to dashboard or survey view
